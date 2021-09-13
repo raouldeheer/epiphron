@@ -1,4 +1,4 @@
-import BufferCursor from "#utils/buffercursor";
+import BufferCursor from "../buffercursor";
 import DataPacket from "./DataPacket";
 
 const LABEL_POINTER = 0xC0;
@@ -40,9 +40,9 @@ export function readHostLabel(buff: BufferCursor) {
  * writeHostLabel writes a label/hostname before the data is writen.
  * @param str Hostname to write as label.
  * @param buff BufferCursor to write to.
- * @param index index of all labels
  */
-export function writeHostLabel(str: string, buff: BufferCursor, index: any) {
+export function writeHostLabel(str: string, buff: BufferCursor) {
+    const index: any = {};
     let string: string | undefined = str;
     while (string) {
         if (index[string]) {
@@ -75,21 +75,21 @@ export function writeHostLabel(str: string, buff: BufferCursor, index: any) {
 export function writeHeaders(buff: BufferCursor, packet: DataPacket) {
     buff.writeUInt16BE(packet.header.id & 0xFFFF);
     let val = 0;
-    val += (packet.header.qr << 15) & 0x8000;
-    val += (packet.header.opcode << 11) & 0x7800;
-    val += (packet.header.aa << 10) & 0x400;
-    val += (packet.header.tc << 9) & 0x200;
-    val += (packet.header.rd << 8) & 0x100;
-    val += (packet.header.ra << 7) & 0x80;
-    val += (packet.header.res1 << 6) & 0x40;
-    val += (packet.header.res2 << 5) & 0x20;
-    val += (packet.header.res3 << 4) & 0x10;
-    val += packet.header.rcode & 0xF;
+    val += (packet.header.qr << 15) &       0b1000000000000000; //0x8000;
+    val += (packet.header.opcode << 11) &   0b0111100000000000; //0x7800;
+    val += (packet.header.aa << 10) &       0b0000010000000000; //0x400;
+    val += (packet.header.tc << 9) &        0b0000001000000000; //0x200;
+    val += (packet.header.rd << 8) &        0b0000000100000000; //0x100;
+    val += (packet.header.ra << 7) &        0b0000000010000000; //0x80;
+    val += (packet.header.res1 << 6) &      0b0000000001000000; //0x40;
+    val += (packet.header.res2 << 5) &      0b0000000000100000; //0x20;
+    val += (packet.header.res3 << 4) &      0b0000000000010000; //0x10;
+    val += packet.header.rcode &            0b0000000000001111; //0xF;
     buff.writeUInt16BE(val & 0xFFFF);
-    buff.writeUInt16BE(1); // aren't used
-    buff.writeUInt16BE(packet.answer.length & 0xFFFF);      // answer offset 6
-    buff.writeUInt16BE(packet.authority.length & 0xFFFF);   // authority offset 8
-    buff.writeUInt16BE(packet.additional.length & 0xFFFF);  // additional offset 10
+    buff.writeUInt16BE(packet.question.length & 0xFFFF);    // question length
+    buff.writeUInt16BE(packet.answer.length & 0xFFFF);      // answer length
+    buff.writeUInt16BE(packet.authority.length & 0xFFFF);   // authority length
+    buff.writeUInt16BE(packet.additional.length & 0xFFFF);  // additional length
 }
 
 /**
@@ -99,7 +99,7 @@ export function writeHeaders(buff: BufferCursor, packet: DataPacket) {
  */
 export function parseHeaders(msg: BufferCursor, packet: DataPacket) {
     packet.header.id = msg.readUInt16BE();
-    var val = msg.readUInt16BE();
+    const val = msg.readUInt16BE();
     packet.header.qr = (val & 0x8000) >> 15;
     packet.header.opcode = (val & 0x7800) >> 11;
     packet.header.aa = (val & 0x400) >> 10;

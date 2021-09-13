@@ -1,5 +1,5 @@
-import BufferCursor from "#utils/buffercursor";
-import { readHostLabel, writeHostLabel } from "#packet/packetUtils";
+import BufferCursor from "../buffercursor";
+import { readHostLabel, writeHostLabel } from "../packet/packetUtils";
 import { Record, InputResourceRecord } from "./Record";
 
 export interface SOA_Record extends InputResourceRecord {
@@ -30,9 +30,9 @@ export class SOA extends Record {
         this.expiration = opts.expiration;
         this.minimum = opts.minimum;
     }
-    public write(cursor: BufferCursor, labels: any) {
-        writeHostLabel(this.primary, cursor, labels);
-        writeHostLabel(this.admin, cursor, labels);
+    public write(cursor: BufferCursor) {
+        writeHostLabel(this.primary, cursor);
+        writeHostLabel(this.admin, cursor);
         cursor.writeUInt32BE(this.serial & 0xFFFFFFFF);
         cursor.writeInt32BE(this.refresh & 0xFFFFFFFF);
         cursor.writeInt32BE(this.retry & 0xFFFFFFFF);

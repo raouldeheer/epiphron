@@ -1,13 +1,9 @@
 export default class BufferCursor {
     private pos: number;
-    private noAssert: boolean | undefined;
     buffer: Buffer;
     length: number;
-    constructor(buff: Buffer, noAssert?: boolean) {
+    constructor(buff: Buffer) {
         this.pos = 0;
-        this.noAssert = noAssert;
-        if (this.noAssert === undefined)
-            this.noAssert = true;
         this.buffer = buff;
         this.length = buff.length;
     }
@@ -16,18 +12,8 @@ export default class BufferCursor {
         this.pos += step;
     }
     private checkWrite(size: number) {
-        let shouldThrow = false;
-
-        const length = this.length;
-        const pos = this.pos;
-
-        if (size > length)
-            shouldThrow = true;
-
-        if (length - pos < size)
-            shouldThrow = true;
-
-        if (shouldThrow) throw new BufferCursorOverflow(length, pos, size);
+        if ((size > this.length) || (this.length - this.pos < size))
+            throw new BufferCursorOverflow(this.length, this.pos, size);
     }
     getBuffer(offset: number = 0) {
         const result = Buffer.alloc(this.pos);
@@ -54,15 +40,14 @@ export default class BufferCursor {
 
         return buf;
     }
-    toString(encoding: BufferEncoding | undefined, length: number | undefined) {
+    toString(encoding: BufferEncoding = 'utf8', length?: number) {
         const end = length === undefined ? this.length : this.pos + length;
-        if (!encoding) encoding = 'utf8';
 
         const ret = this.buffer.toString(encoding, this.pos, end);
         this.seek(end);
         return ret;
     }
-    write(value: string, length: number, encoding: BufferEncoding | undefined) {
+    write(value: string, length: number, encoding?: BufferEncoding) {
         const ret = this.buffer.write(value, this.pos, length, encoding);
         this.move(ret);
         return this;
@@ -72,7 +57,7 @@ export default class BufferCursor {
         this.move(length);
         return this;
     }
-    fill(value: string | number | Uint8Array, length: number | undefined) {
+    fill(value: string | number | Uint8Array, length?: number) {
         const end = length === undefined ? this.length : this.pos + length;
         this.checkWrite(end - this.pos);
 
@@ -93,72 +78,72 @@ export default class BufferCursor {
         return this;
     }
     readUInt8() {
-        var ret = this.buffer.readUInt8(this.pos);
+        const ret = this.buffer.readUInt8(this.pos);
         this.move(1);
         return ret;
     }
     readInt8() {
-        var ret = this.buffer.readInt8(this.pos);
+        const ret = this.buffer.readInt8(this.pos);
         this.move(1);
         return ret;
     }
     readInt16BE() {
-        var ret = this.buffer.readInt16BE(this.pos);
+        const ret = this.buffer.readInt16BE(this.pos);
         this.move(2);
         return ret;
     }
     readInt16LE() {
-        var ret = this.buffer.readInt16LE(this.pos);
+        const ret = this.buffer.readInt16LE(this.pos);
         this.move(2);
         return ret;
     }
     readUInt16BE() {
-        var ret = this.buffer.readUInt16BE(this.pos);
+        const ret = this.buffer.readUInt16BE(this.pos);
         this.move(2);
         return ret;
     }
     readUInt16LE() {
-        var ret = this.buffer.readUInt16LE(this.pos);
+        const ret = this.buffer.readUInt16LE(this.pos);
         this.move(2);
         return ret;
     }
     readUInt32LE() {
-        var ret = this.buffer.readUInt32LE(this.pos);
+        const ret = this.buffer.readUInt32LE(this.pos);
         this.move(4);
         return ret;
     }
     readUInt32BE() {
-        var ret = this.buffer.readUInt32BE(this.pos);
+        const ret = this.buffer.readUInt32BE(this.pos);
         this.move(4);
         return ret;
     }
     readInt32LE() {
-        var ret = this.buffer.readInt32LE(this.pos);
+        const ret = this.buffer.readInt32LE(this.pos);
         this.move(4);
         return ret;
     }
     readInt32BE() {
-        var ret = this.buffer.readInt32BE(this.pos);
+        const ret = this.buffer.readInt32BE(this.pos);
         this.move(4);
         return ret;
     }
     readFloatBE() {
-        var ret = this.buffer.readFloatBE(this.pos);
+        const ret = this.buffer.readFloatBE(this.pos);
         this.move(4);
         return ret;
     }
     readFloatLE() {
-        var ret = this.buffer.readFloatLE(this.pos);
+        const ret = this.buffer.readFloatLE(this.pos);
         this.move(4);
         return ret;
     }
     readDoubleBE() {
-        var ret = this.buffer.readDoubleBE(this.pos);
+        const ret = this.buffer.readDoubleBE(this.pos);
         this.move(8);
         return ret;
     }
     readDoubleLE() {
-        var ret = this.buffer.readDoubleLE(this.pos);
+        const ret = this.buffer.readDoubleLE(this.pos);
         this.move(8);
         return ret;
     }

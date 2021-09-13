@@ -1,5 +1,5 @@
-import BufferCursor from "#utils/buffercursor";
-import { readHostLabel, writeHostLabel } from "#packet/packetUtils";
+import BufferCursor from "../buffercursor";
+import { readHostLabel, writeHostLabel } from "../packet/packetUtils";
 import { InputResourceRecord, Record } from "./Record";
 
 export interface SRV_Record extends InputResourceRecord {
@@ -21,11 +21,11 @@ export class SRV extends Record {
         this.port = opts.port;
         this.target = opts.target;
     }
-    public write(cursor: BufferCursor, labels: any) {
+    public write(cursor: BufferCursor) {
         cursor.writeUInt16BE(this.priority & 0xFFFF);
         cursor.writeUInt16BE(this.weight & 0xFFFF);
         cursor.writeUInt16BE(this.port & 0xFFFF);
-        writeHostLabel(this.target, cursor, labels);
+        writeHostLabel(this.target, cursor);
     }
     static parse(val: SRV_Record, cursor: BufferCursor) {
         val.priority = cursor.readUInt16BE();

@@ -1,4 +1,4 @@
-import BufferCursor from "#utils/buffercursor";
+import BufferCursor from "../buffercursor";
 import { InputResourceRecord, Record } from "./Record";
 
 export interface TXT_Record extends InputResourceRecord {
@@ -12,8 +12,8 @@ export class TXT extends Record {
         this.data = opts.data;
     }
     public write(cursor: BufferCursor) {
-        for (var i = 0, len = this.data.length; i < len; i++) {
-            var dataLen = Buffer.byteLength(this.data[i], 'utf8');
+        for (let i = 0, len = this.data.length; i < len; i++) {
+            const dataLen = Buffer.byteLength(this.data[i], 'utf8');
             cursor.writeUInt8(dataLen);
             cursor.write(this.data[i], dataLen, 'utf8');
         }
@@ -40,10 +40,9 @@ export class DATA extends Record {
         this.data = opts.data;
     }
     public write(cursor: BufferCursor) {
-        for (var i = 0, len = this.data.length; i < len; i++) {
-            const dataLen = this.data[i].byteLength;
-            cursor.writeUInt8(dataLen);
-            cursor.writeBuff(this.data[i], dataLen);
+        for (let i = 0, len = this.data.length; i < len; i++) {
+            cursor.writeUInt8(this.data[i].byteLength);
+            cursor.writeBuff(this.data[i], this.data[i].byteLength);
         }
     }
 }

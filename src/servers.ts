@@ -3,14 +3,12 @@ import { EventEmitter } from 'events';
 import * as net from 'net';
 import { UDPSocket, TCPSocket, Socket } from './sockets';
 import { dnsRequest } from './requestTypes';
-import DataPacket from '#packet/DataPacket';
+import DataPacket from './packet/DataPacket';
 
 class Server extends EventEmitter {
     socket: net.Server | dgramSocket;
-    isUDP: boolean;
-    constructor(socket: net.Server | dgramSocket, isUDP: boolean) {
+    constructor(socket: net.Server | dgramSocket) {
         super();
-        this.isUDP = isUDP;
         this.socket = socket;
         this.socket.on('listening', () => {
             this.emit('listening');
@@ -20,7 +18,7 @@ class Server extends EventEmitter {
         });
         this.socket.on('error', (err: Error) => {
             console.error(err);
-            // this.emit('socketError', err, this.socket);
+            this.emit('socketError', err, this.socket);
         });
         this.socket.on("close", (err: Error) => {
             console.error(err);
@@ -33,7 +31,7 @@ class Server extends EventEmitter {
         });
     }
     handleMessage(msg: Buffer, remote: Socket, address: net.AddressInfo) {
-        const response = new DataPacket(remote, this.isUDP);
+        const response = new DataPacket(remote);
         try {
             const request: dnsRequest = {
                 address: address,
@@ -51,7 +49,7 @@ class Server extends EventEmitter {
 
 class UDPServer extends Server {
     constructor(opts: { dgram_type: SocketType; }) {
-        super(createSocket(opts.dgram_type || 'udp4'), true);
+        super(createSocket(opts.dgram_type || 'udp4'));
         this.socket = this.socket as dgramSocket;
         this.socket.on('message', (msg: Buffer, remote: RemoteInfo) => {
             this.handleMessage(msg, new UDPSocket(this.socket as dgramSocket, remote), remote);
@@ -72,7 +70,7 @@ class TCPServer extends Server {
                 this.handleMessage(msg, tcp, address);
             });
             tcp.catchMessages();
-        }), false);
+        }));
     }
     serve(port: number, address: string, callback?: () => void) {
         this.socket = this.socket as net.Server;

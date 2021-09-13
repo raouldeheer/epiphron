@@ -1,5 +1,5 @@
-import { NAME_TO_QTYPE } from "#packet/consts";
-import BufferCursor from "#utils/buffercursor";
+import { NAME_TO_QTYPE } from "../packet/consts";
+import BufferCursor from "../buffercursor";
 import { A, AAAA, Address_Record } from "./AddressRecord";
 import { Record, ResourceRecord } from "./Record";
 import { NS, CNAME, PTR, DataString_Record, NS_Record, CNAME_Record, PTR_Record } from "./DataStringRecord";
@@ -8,7 +8,7 @@ import { MX, MX_Record } from "./MXRecord";
 import { SRV, SRV_Record } from "./SRVRecord";
 import { SOA, SOA_Record } from "./SOARecord";
 import { NAPTR, NAPTR_Record } from "./NAPTRRecord";
-import { readHostLabel } from "#packet/packetUtils";
+import { readHostLabel } from "../packet/packetUtils";
 
 export {
     Record, ResourceRecord,
@@ -32,7 +32,7 @@ export function parseRecord(cursor: BufferCursor): Record {
         name: readHostLabel(cursor),
         type: cursor.readUInt16BE(),
         class: cursor.readUInt16BE(),
-        ttl: cursor.readUInt32BE()
+        ttl: cursor.readUInt32BE(),
     };
     let len = cursor.readUInt16BE();
 

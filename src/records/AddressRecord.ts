@@ -1,5 +1,5 @@
 import ipaddr from "ipaddr.js";
-import BufferCursor from "#utils/buffercursor";
+import BufferCursor from "../buffercursor";
 import { Record, InputResourceRecord } from "./Record";
 
 export interface Address_Record extends InputResourceRecord {
@@ -15,7 +15,7 @@ class AddressRecord extends Record {
     }
     public write(cursor: BufferCursor) {
         ipaddr.parse(this.address).toByteArray()
-            .forEach((b: any) => {
+            .forEach(b => {
                 cursor.writeUInt8(b);
             });
     }

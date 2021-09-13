@@ -2,23 +2,21 @@ import { createSocket, RemoteInfo, Socket as dgramSocket, SocketType } from 'dgr
 import { EventEmitter } from 'events';
 import { Socket as netSocket, connect, NetConnectOpts } from 'net';
 import ipaddr from 'ipaddr.js';
-import BufferCursor from '#utils/buffercursor';
+import BufferCursor from './buffercursor';
 
 export abstract class Socket extends EventEmitter {
     protected buff: Buffer | undefined;
-    public base_size: number;
     protected bound: boolean;
     protected unref: Function | undefined;
     protected ref: Function | undefined;
-    constructor(base_size: number) {
+    constructor() {
         super();
         this.buff = undefined;
-        this.base_size = base_size;
         this.bound = false;
         this.unref = undefined;
         this.ref = undefined;
     }
-    public abstract buffer(size: number): Buffer;
+    public abstract buffer(): Buffer;
     public abstract send(buffercursor: BufferCursor): void;
 }
 
@@ -26,12 +24,12 @@ export class UDPSocket extends Socket {
     private socket: dgramSocket;
     private remote: RemoteInfo | undefined;
     constructor(socket: dgramSocket, remote?: RemoteInfo) {
-        super(512);
+        super();
         this.socket = socket;
         this.remote = remote;
     }
-    public buffer(size: number): Buffer {
-        return this.buff = Buffer.alloc(size);
+    public buffer(): Buffer {
+        return this.buff = Buffer.allocUnsafe(512);
     }
     public send(buffercursor: BufferCursor): void {
         const len = buffercursor.tell();
@@ -75,7 +73,7 @@ export class TCPSocket extends Socket {
     private Socket: netSocket;
     private rest: Buffer | undefined;
     constructor(socket: netSocket) {
-        super(4096);
+        super();
         this.Socket = socket;
         this.Socket.on('error', this.error);
         this.rest = undefined;
@@ -89,8 +87,8 @@ export class TCPSocket extends Socket {
             console.error(error);
         }
     }
-    public buffer(size: number): Buffer {
-        this.buff = Buffer.alloc(size + 2);
+    public buffer(): Buffer {
+        this.buff = Buffer.allocUnsafe(65528);
         return this.buff.slice(2);
     }
     public send(buffercursor: BufferCursor) {
@@ -100,7 +98,7 @@ export class TCPSocket extends Socket {
         let total = 0;
         do {
             // this._socket.write(finalBuffer.slice(total, total+=4096));
-            this.Socket.write(finalBuffer.slice(total, total += 63000));
+            this.Socket.write(finalBuffer.slice(total, total += 63900));
         } while (total <= len);
     }
     public bind(server: { port: NetConnectOpts; address: (() => void) | undefined; }) {
@@ -138,7 +136,7 @@ export class TCPSocket extends Socket {
             if (!this.rest) {
                 this.rest = data;
             } else {
-                const tmp = Buffer.alloc(this.rest.length + data.length);
+                const tmp = Buffer.allocUnsafe(this.rest.length + data.length);
                 this.rest.copy(tmp, 0);
                 data.copy(tmp, this.rest.length);
                 this.rest = tmp;

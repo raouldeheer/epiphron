@@ -1,21 +1,5 @@
-import { ResourceRecord } from "#records/index";
-import * as net from 'net';
-
-export enum requestTypes {
-	CL = 'cl',
-	CR = 'cr',
-	SR = 'sr',
-	LR = 'lr',
-	CD = 'cd'
-}
-
-export enum cnameTypes {
-	NXT = 'NXT',
-	EOT = 'EOT',
-	FNF = 'FNF',
-	BPS = 'BPS',
-	GPE = 'GPE'
-}
+import { ResourceRecord } from "./records/index";
+import * as net from "net";
 
 export interface Question {
 	name: string,

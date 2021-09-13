@@ -1,5 +1,5 @@
-import BufferCursor from "#utils/buffercursor";
-import { readHostLabel, writeHostLabel } from "#packet/packetUtils";
+import BufferCursor from "../buffercursor";
+import { readHostLabel, writeHostLabel } from "../packet/packetUtils";
 import { Record, InputResourceRecord } from "./Record";
 
 export interface MX_Record extends InputResourceRecord {
@@ -15,9 +15,9 @@ export class MX extends Record {
         this.priority = opts.priority;
         this.exchange = opts.exchange;
     }
-    public write(cursor: BufferCursor, labels: any) {
+    public write(cursor: BufferCursor) {
         cursor.writeUInt16BE(this.priority & 0xFFFF);
-        writeHostLabel(this.exchange, cursor, labels);
+        writeHostLabel(this.exchange, cursor);
     }
     static parse(val: MX_Record, cursor: BufferCursor) {
         val.priority = cursor.readUInt16BE();
