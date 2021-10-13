@@ -1,2 +1,2 @@
 # epiphron
-Epiphron send and recieve data over dns.
+Epiphron is a dns server for node. Supports tcp & udp.
