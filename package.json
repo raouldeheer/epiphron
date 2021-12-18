@@ -1,22 +1,33 @@
 {
   "name": "epiphron-dns",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "A nodejs dns server",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev:build": "tsc -w"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raouldeheer/epiphron.git"
+  },
+  "keywords": [
+    "dns",
+    "tcp",
+    "udp"
+  ],
+  "author": "Raoul de Heer",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/raouldeheer/epiphron/issues"
+  },
   "devDependencies": {
     "@types/node": "^15.14.2"
   },
   "dependencies": {
     "ipaddr.js": "^2.0.1",
-    "mylas": "^2.0.1",
-    "tslib": "^1.14.1"
+    "mylas": "^2.1.6",
+    "tslib": "^2.3.1"
   }
 }
