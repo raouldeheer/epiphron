@@ -1,14 +1,34 @@
 import BufferCursor, { BufferCursorOverflow } from '../buffercursor';
 import { Socket } from "../sockets";
 import { Question } from "../requestTypes";
-import { Record } from "../records/index";
-import { parseRecord } from "../records/Record";
+import {
+    A,
+    AAAA,
+    Address_Record,
+    CNAME,
+    DataString_Record,
+    MX,
+    MX_Record,
+    NAPTR,
+    NAPTR_Record,
+    NS,
+    PTR,
+    Record,
+    ResourceRecord,
+    SOA,
+    SOA_Record,
+    SRV,
+    SRV_Record,
+    TXT,
+    TXT_Record
+} from "../records/index";
 import {
     parseHeaders,
     readHostLabel,
     writeHeaders,
     writeHostLabel,
 } from "./packetUtils";
+import { NAME_TO_QTYPE } from './consts';
 
 interface Header {
     id: number;
@@ -57,19 +77,19 @@ export default class DataPacket {
             try {
                 // Writing headers.
                 writeHeaders(buff, packet);
-        
+
                 // Writing question.
                 packet.question.forEach(value => {
                     writeHostLabel(value.name, buff);
                     buff.writeUInt16BE(value.type & 0xFFFF);
                     buff.writeUInt16BE(value.class & 0xFFFF);
                 });
-        
+
                 // Writing resource records.
                 packet.answer.forEach(record => record.writeRecord(buff));
                 packet.authority.forEach(record => record.writeRecord(buff));
                 packet.additional.forEach(record => record.writeRecord(buff));
-        
+
                 // return cursor position for end of data pointer.
                 return buff.tell();
             } catch (error) {
@@ -130,4 +150,32 @@ export default class DataPacket {
         this.socket.send(buffercursor);
     }
 
+}
+
+// Parsing record
+function parseRecord(cursor: BufferCursor): Record {
+    // Parse ResourceRecord
+    let val: ResourceRecord = {
+        name: readHostLabel(cursor),
+        type: cursor.readUInt16BE(),
+        class: cursor.readUInt16BE(),
+        ttl: cursor.readUInt32BE(),
+    };
+    let len = cursor.readUInt16BE();
+
+    // Parse Record type
+    switch (val.type) {
+        case NAME_TO_QTYPE.A: return A.parse(val as Address_Record, cursor);
+        case NAME_TO_QTYPE.AAAA: return AAAA.parse(val as Address_Record, cursor);
+        case NAME_TO_QTYPE.NS: return NS.parse(val as DataString_Record, cursor);
+        case NAME_TO_QTYPE.CNAME: return CNAME.parse(val as DataString_Record, cursor);
+        case NAME_TO_QTYPE.PTR: return PTR.parse(val as DataString_Record, cursor);
+        case NAME_TO_QTYPE.SPF:
+        case NAME_TO_QTYPE.TXT: return TXT.parse(val as TXT_Record, cursor, len);
+        case NAME_TO_QTYPE.MX: return MX.parse(val as MX_Record, cursor);
+        case NAME_TO_QTYPE.SRV: return SRV.parse(val as SRV_Record, cursor);
+        case NAME_TO_QTYPE.SOA: return SOA.parse(val as SOA_Record, cursor);
+        case NAME_TO_QTYPE.NAPTR: return NAPTR.parse(val as NAPTR_Record, cursor);
+        default: return CNAME.parse(val as DataString_Record, cursor);
+    }
 }

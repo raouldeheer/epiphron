@@ -1,6 +1,6 @@
 {
   "name": "epiphron-dns",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A nodejs dns server",
   "main": "dist/index.js",
   "typings": "dist/index",
