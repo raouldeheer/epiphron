@@ -1,7 +1,8 @@
 import BufferCursor, { BufferCursorOverflow } from '../buffercursor';
 import { Socket } from "../sockets";
 import { Question } from "../requestTypes";
-import { parseRecord, Record } from "../records/index";
+import { Record } from "../records/index";
+import { parseRecord } from "../records/Record";
 import {
     parseHeaders,
     readHostLabel,

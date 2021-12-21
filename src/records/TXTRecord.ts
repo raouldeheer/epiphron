@@ -7,8 +7,9 @@ export interface TXT_Record extends InputResourceRecord {
 
 export class TXT extends Record {
     data: string[];
+    public static qtype = 16;
     constructor(opts: TXT_Record) {
-        super({ ...opts, type: 16 });
+        super({ ...opts, type: TXT.qtype });
         this.data = opts.data;
     }
     public write(cursor: BufferCursor) {
@@ -35,8 +36,9 @@ export interface DATA_Record extends InputResourceRecord {
 
 export class DATA extends Record {
     data: Buffer[];
+    public static qtype = 16;
     constructor(opts: DATA_Record) {
-        super({ ...opts, type: 16 });
+        super({ ...opts, type: DATA.qtype });
         this.data = opts.data;
     }
     public write(cursor: BufferCursor) {

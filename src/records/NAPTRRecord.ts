@@ -18,8 +18,9 @@ export class NAPTR extends Record {
     service: string;
     regexp: string;
     replacement: string;
+    public static qtype = 35;
     constructor(opts: NAPTR_Record) {
-        super({ ...opts, type: 35 });
+        super({ ...opts, type: NAPTR.qtype });
         this.order = opts.order;
         this.preference = opts.preference;
         this.flags = opts.flags;

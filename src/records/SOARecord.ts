@@ -20,8 +20,9 @@ export class SOA extends Record {
     retry: number;
     expiration: number;
     minimum: number;
+    public static qtype = 6;
     constructor(opts: SOA_Record) {
-        super({ ...opts, type: 6 });
+        super({ ...opts, type: SOA.qtype });
         this.primary = opts.primary;
         this.admin = opts.admin;
         this.serial = opts.serial;

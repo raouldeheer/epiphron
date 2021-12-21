@@ -20,7 +20,7 @@ class AddressRecord extends Record {
             });
     }
     static parse(val: Address_Record, cursor: BufferCursor) {
-        if (val.type == 1) {
+        if (val.type == A.qtype) {
             val.address =
                 '' + cursor.readUInt8() +
                 '.' + cursor.readUInt8() +
@@ -42,14 +42,16 @@ class AddressRecord extends Record {
 
 export type A_Record = Address_Record;
 export class A extends AddressRecord {
+    public static qtype = 1;
     constructor(opts: A_Record) {
-        super({ ...opts, type: 1 });
+        super({ ...opts, type: A.qtype });
     }
 }
 
 export type AAAA_Record = Address_Record;
 export class AAAA extends AddressRecord {
+    public static qtype = 28;
     constructor(opts: AAAA_Record) {
-        super({ ...opts, type: 28 });
+        super({ ...opts, type: AAAA.qtype });
     }
 }

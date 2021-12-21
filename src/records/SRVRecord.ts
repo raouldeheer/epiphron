@@ -14,8 +14,9 @@ export class SRV extends Record {
     weight: number;
     port: number;
     target: string;
+    public static qtype = 33;
     constructor(opts: SRV_Record) {
-        super({ ...opts, type: 33 });
+        super({ ...opts, type: SRV.qtype });
         this.priority = opts.priority;
         this.weight = opts.weight;
         this.port = opts.port;

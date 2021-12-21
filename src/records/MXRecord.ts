@@ -10,8 +10,9 @@ export interface MX_Record extends InputResourceRecord {
 export class MX extends Record {
     priority: number;
     exchange: string;
+    public static qtype = 15;
     constructor(opts: MX_Record) {
-        super({ ...opts, type: 15 });
+        super({ ...opts, type: MX.qtype });
         this.priority = opts.priority;
         this.exchange = opts.exchange;
     }

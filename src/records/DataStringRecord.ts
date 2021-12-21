@@ -29,21 +29,24 @@ class DataStringRecord extends Record {
 
 export type NS_Record = DataString_Record;
 export class NS extends DataStringRecord {
+    public static qtype = 2;
     constructor(opts: NS_Record) {
-        super({ ...opts, type: 2 });
+        super({ ...opts, type: NS.qtype });
     }
 }
 
 export type CNAME_Record = DataString_Record;
 export class CNAME extends DataStringRecord {
+    public static qtype = 5;
     constructor(opts: CNAME_Record) {
-        super({ ...opts, type: 5 });
+        super({ ...opts, type: CNAME.qtype });
     }
 }
 
 export type PTR_Record = DataString_Record;
 export class PTR extends DataStringRecord {
+    public static qtype = 12;
     constructor(opts: PTR_Record) {
-        super({ ...opts, type: 12 });
+        super({ ...opts, type: PTR.qtype });
     }
 }
