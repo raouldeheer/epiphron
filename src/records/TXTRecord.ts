@@ -36,9 +36,8 @@ export interface DATA_Record extends InputResourceRecord {
 
 export class DATA extends Record {
     data: Buffer[];
-    public static qtype = 16;
     constructor(opts: DATA_Record) {
-        super({ ...opts, type: DATA.qtype });
+        super({ ...opts, type: TXT.qtype });
         this.data = opts.data;
     }
     public write(cursor: BufferCursor) {

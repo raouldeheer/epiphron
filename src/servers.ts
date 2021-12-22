@@ -20,15 +20,9 @@ class Server extends EventEmitter {
             console.error(err);
             this.emit('socketError', err, this.socket);
         });
-        this.socket.on("close", (err: Error) => {
-            console.error(err);
-        });
-        this.socket.on("timeout", (err: Error) => {
-            console.error(err);
-        });
-        this.socket.on("end", (err: Error) => {
-            console.error(err);
-        });
+        this.socket.on("close", console.error);
+        this.socket.on("timeout", console.error);
+        this.socket.on("end", console.error);
     }
     handleMessage(msg: Buffer, remote: Socket, address: net.AddressInfo) {
         const response = new DataPacket(remote);
