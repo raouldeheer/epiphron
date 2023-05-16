@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/raouldeheer/epiphron#readme",
   "devDependencies": {
-    "@types/node": "^18.0.0"
+    "@types/node": "^20.1.4"
   },
   "dependencies": {
     "ipaddr.js": "^2.0.1",
